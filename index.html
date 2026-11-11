@@ -1,1 +1,232 @@
 
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IVAN STORE | Tecnología</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #172033;
+}
+header {
+  background: #101827;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+header h1 { margin: 0; color: #38bdf8; }
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 8px;
+}
+.hero {
+  background: linear-gradient(120deg,#101827,#164e63);
+  color: white;
+  text-align: center;
+  padding: 65px 20px;
+}
+.hero h2 { font-size: 34px; }
+.hero p { color: #cbd5e1; }
+button {
+  background: #0284c7;
+  color: white;
+  border: 0;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.container { padding: 25px 5%; }
+.search {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+  gap: 20px;
+}
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #0001;
+}
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+.price {
+  color: #0284c7;
+  font-weight: bold;
+  font-size: 20px;
+}
+.cart {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+footer {
+  background: #101827;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  margin-top: 40px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>IVAN STORE</h1>
+  <nav>
+    <a href="#inicio">Inicio</a>
+    <a href="#productos">Productos</a>
+    <a href="#carrito">Carrito 🛒</a>
+  </nav>
+</header>
+
+<section class="hero" id="inicio">
+  <h2>BIENVENIDO A IVAN STORE</h2>
+  <p>Tu tienda de tecnología y accesorios.</p>
+  <a href="#productos">
+    <button>VER PRODUCTOS</button>
+  </a>
+</section>
+
+<main class="container" id="productos">
+  <h2>Nuestros productos</h2>
+  <input class="search" id="buscar"
+    placeholder="Buscar productos..."
+    oninput="mostrarProductos()">
+  <div class="products" id="lista"></div>
+
+  <section class="cart" id="carrito">
+    <h2>🛒 Mi carrito</h2>
+    <div id="items">Tu carrito está vacío.</div>
+    <h3 id="total">Total: $0</h3>
+    <button onclick="comprar()">Comprar por WhatsApp</button>
+  </section>
+</main>
+
+<footer>
+  <h3>IVAN STORE</h3>
+  <p>Tu tecnología, tu estilo.</p>
+  <p>© 2026 IVAN STORE</p>
+</footer>
+
+<script>
+const productos = [
+  {
+    nombre: "Auriculares Bluetooth",
+    precio: 15000,
+    imagen: "https://placehold.co/300x200?text=Auriculares"
+  },
+  {
+    nombre: "Mouse Gamer",
+    precio: 12000,
+    imagen: "https://placehold.co/300x200?text=Mouse"
+  },
+  {
+    nombre: "Teclado USB",
+    precio: 18000,
+    imagen: "https://placehold.co/300x200?text=Teclado"
+  },
+  {
+    nombre: "Cargador USB",
+    precio: 8000,
+    imagen: "https://placehold.co/300x200?text=Cargador"
+  }
+];
+
+let carrito = [];
+
+function mostrarProductos() {
+  const busqueda = document.getElementById("buscar")
+    .value.toLowerCase();
+
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  productos.filter(p =>
+    p.nombre.toLowerCase().includes(busqueda)
+  ).forEach((p, i) => {
+    lista.innerHTML += `
+      <article class="card">
+        <img src="${p.imagen}" alt="${p.nombre}">
+        <h3>${p.nombre}</h3>
+        <p class="price">$${p.precio.toLocaleString("es-AR")}</p>
+        <button onclick="agregar(${productos.indexOf(p)})">
+          Agregar al carrito
+        </button>
+      </article>`;
+  });
+}
+
+function agregar(i) {
+  carrito.push(productos[i]);
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  const items = document.getElementById("items");
+  const total = carrito.reduce((s,p) => s + p.precio, 0);
+
+  items.innerHTML = carrito.length
+    ? carrito.map((p,i) =>
+      `<p>${p.nombre} - $${p.precio.toLocaleString("es-AR")}
+      <button onclick="quitar(${i})">Quitar</button></p>`
+    ).join("")
+    : "Tu carrito está vacío.";
+
+  document.getElementById("total").textContent =
+    "Total: $" + total.toLocaleString("es-AR");
+}
+
+function quitar(i) {
+  carrito.splice(i,1);
+  actualizarCarrito();
+}
+
+function comprar() {
+  if (!carrito.length) {
+    alert("Agrega productos primero.");
+    return;
+  }
+
+  const telefono = "5491112345678";
+  const detalle = carrito.map(p =>
+    p.nombre + " - $" + p.precio
+  ).join("\n");
+
+  const total = carrito.reduce((s,p) => s+p.precio,0);
+
+  const mensaje = encodeURIComponent(
+    "Hola, quiero comprar en IVAN STORE:\n" +
+    detalle + "\nTotal: $" + total
+  );
+
+  window.open(
+    "https://wa.me/" + telefono + "?text=" + mensaje,
+    "_blank"
+  );
+}
+
+mostrarProductos();
+</script>
+</body>
+</html>
